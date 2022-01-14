@@ -12,13 +12,14 @@ public:
 };
 
 class Rover {
+
 public:
     using Program = std::unordered_map<char, Command>;
     using SensorModule = std::vector<std::shared_ptr<Sensor>>;
 
-    Rover(Program &program, SensorModule &sensors) :
-            program(std::move(program)),
-            sensors(std::move(sensors)) {}
+    Rover(Program &&program, SensorModule &&sensors) :
+            program(program),
+            sensors(sensors) {}
 
     void execute(const std::string &commands) {
         std::cout << commands << "\n";
@@ -28,7 +29,7 @@ public:
 
         bool success;
         for (char c : commands) {
-            success = execute_command(c);
+            success = execute(c);
             if (!success) {
                 break;
             }
@@ -43,17 +44,17 @@ public:
 private:
     const Program program;
     const SensorModule sensors;
-    std::shared_ptr<Position> p = nullptr;
     bool is_stopped = false;
+    std::shared_ptr<Position> p = nullptr;
 
-    bool execute_command(char c) {
+    bool execute(char command) {
         assert(is_landed());
-        std::cout << c <<"\n";
-        if (!command_exists(c)) {
+        std::cout << command << "\n";
+        if (!command_exists(command)) {
             return false;
         }
 
-        for (const auto &instr : program.at(c)) {
+        for (const auto &instr : program.at(command)) {
             Position next_pos = instr->execute(*p);
             if (!is_location_safe(next_pos.l)) {
                 return false;
@@ -96,7 +97,6 @@ std::ostream &operator<<(std::ostream &os, const Rover &r) {
     return os;
 }
 
-
 class RoverBuilder {
 public:
     RoverBuilder program_command(char name, Command &&command) {
@@ -110,15 +110,12 @@ public:
     }
 
     Rover build() {
-        return {program, sensors};
+        return {std::move(program), std::move(sensors)};
     }
 
 private:
     typename Rover::Program program{};
     typename Rover::SensorModule sensors{};
 };
-
-
-
 
 #endif //ROVER_ROVER_H

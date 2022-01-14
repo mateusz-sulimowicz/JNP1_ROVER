@@ -21,6 +21,8 @@ std::ostream &operator<<(std::ostream &os, const Direction &d) {
         case Direction::WEST:
             os <<  "WEST";
             return os;
+        default:
+            return os;
     }
 }
 
@@ -46,6 +48,8 @@ public:
                 return {{l.x, l.y - 1}, d};
             case Direction::WEST:
                 return {{l.x - 1, l.y}, d};
+            default:
+                throw std::exception{};
         }
     }
 
@@ -59,6 +63,8 @@ public:
                 return {{l.x, l.y}, Direction::WEST};
             case Direction::WEST:
                 return {{l.x, l.y}, Direction::NORTH};
+            default:
+                throw std::exception{};
         }
     }
 
@@ -72,6 +78,8 @@ public:
                 return {{l.x, l.y}, Direction::EAST};
             case Direction::WEST:
                 return {{l.x, l.y}, Direction::SOUTH};
+            default:
+                throw std::exception{};
         }
     }
 
@@ -85,6 +93,8 @@ public:
                 return {{l.x, l.y + 1}, d};
             case Direction::WEST:
                 return {{l.x + 1, l.y}, d};
+            default:
+                throw std::exception{};
         }
     }
 
@@ -104,6 +114,5 @@ std::ostream &operator<<(std::ostream &os, const Position &p) {
        << ")";
     return os;
 }
-
 
 #endif //ROVER_POSITION_H
