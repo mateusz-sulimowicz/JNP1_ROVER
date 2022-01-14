@@ -97,8 +97,18 @@ std::ostream &operator<<(std::ostream &os, const Rover &r) {
 
 class RoverBuilder {
 public:
-    RoverBuilder program_command(char name, Command &&command) {
+    RoverBuilder program_command(char name, Command &command) {
         program.insert({name, std::move(command)});
+        return *this;
+    }
+
+    RoverBuilder program_command(char name, Command &&command) {
+        program.insert({name, command});
+        return *this;
+    }
+
+    RoverBuilder add_sensor(std::shared_ptr<Sensor> &sensor) {
+        sensors.push_back(std::move(sensor));
         return *this;
     }
 

@@ -16,10 +16,10 @@ std::ostream &operator<<(std::ostream &os, const Direction &d) {
             os << "EAST";
             return os;
         case Direction::SOUTH:
-            os <<  "SOUTH";
+            os << "SOUTH";
             return os;
         case Direction::WEST:
-            os <<  "WEST";
+            os << "WEST";
             return os;
         default:
             return os;
@@ -72,12 +72,12 @@ public:
         switch (d) {
             case Direction::NORTH:
                 return {{l.x, l.y}, Direction::WEST};
-            case Direction::EAST:
-                return {{l.x, l.y}, Direction::NORTH};
-            case Direction::SOUTH:
-                return {{l.x, l.y}, Direction::EAST};
             case Direction::WEST:
                 return {{l.x, l.y}, Direction::SOUTH};
+            case Direction::SOUTH:
+                return {{l.x, l.y}, Direction::EAST};
+            case Direction::EAST:
+                return {{l.x, l.y}, Direction::NORTH};
             default:
                 throw std::exception{};
         }
