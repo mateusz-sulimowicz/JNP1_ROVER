@@ -5,6 +5,7 @@
 #include <utility>
 #include <cassert>
 #include "command.h"
+#include "sensor.h"
 
 class RoverNotLanded : public std::logic_error {
 public:
@@ -14,18 +15,18 @@ public:
 class Rover {
 public:
     using Program = std::unordered_map<char, Command>;
-    using SensorModule = std::vector<std::shared_ptr<Sensor>>;
+    using SensorModule = std::vector<std::unique_ptr<Sensor>>;
 
-    Rover(Program &&program, SensorModule &&sensors) :
-            program(program),
-            sensors(sensors) {}
+    Rover(Program program, SensorModule sensors) :
+            program(std::move(program)),
+            sensors(std::move(sensors)) {}
 
     void execute(const std::string &commands) {
         if (!is_landed()) {
             throw RoverNotLanded{};
         }
 
-        bool success;
+        bool success = true;
         for (char c : commands) {
             success = execute(c);
             if (!success) {
@@ -79,7 +80,6 @@ private:
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Rover &r);
-
 };
 
 std::ostream &operator<<(std::ostream &os, const Rover &r) {
@@ -96,18 +96,19 @@ std::ostream &operator<<(std::ostream &os, const Rover &r) {
 
 class RoverBuilder {
 public:
-    RoverBuilder program_command(char name, Command &&command) {
-        program.insert({name, command});
+    RoverBuilder &program_command(char name, Command command) {
+        program.insert({name, std::move(command)});
         return *this;
     }
 
-    RoverBuilder add_sensor(std::shared_ptr<Sensor> &&sensor) {
-        sensors.push_back(sensor);
+    RoverBuilder &add_sensor(std::unique_ptr<Sensor> sensor) {
+        sensors.push_back(std::move(sensor));
         return *this;
     }
 
     Rover build() {
-        return {std::move(program), std::move(sensors)};
+        return {std::move(program),
+                std::move(sensors)};
     }
 
 private:

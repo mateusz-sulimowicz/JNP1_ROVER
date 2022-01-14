@@ -91,9 +91,6 @@ public:
     Position(Location l, Direction d)
             : l(l), d(d) {}
 
-    Position(const Position &that)
-	    : l(that.l), d(that.d) {}
-
     [[nodiscard]] Position forward() const {
         return {l + delta(), d};
     }
@@ -122,7 +119,7 @@ private:
     const Location l;
     const Direction d;
 
-    const Location delta() const {
+    [[nodiscard]] const Location delta() const {
         switch (d) {
             case Direction::NORTH:
                 return {0, 1};

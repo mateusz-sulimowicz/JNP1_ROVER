@@ -5,55 +5,34 @@
 #include <utility>
 #include <memory>
 #include <vector>
-#include "position.h"
 #include "instruction.h"
-#include "sensor.h"
 
-class Command {
-public:
-    Command(std::initializer_list<std::shared_ptr<Instruction>> instructions)
-        : instr(instructions) {
-    }
-
-    [[nodiscard]] auto begin() const {
-        return instr.begin();
-    }
-
-    [[nodiscard]] auto end() const {
-        return instr.end();
-    }
-
-private:
-    std::vector<std::shared_ptr<Instruction>> instr;
-
-    friend Command compose(std::initializer_list<Command> commands);
-};
+using Command = std::vector<std::shared_ptr<Instruction>>;
 
 Command compose(std::initializer_list<Command> commands) {
     Command res{};
     for (auto &command: commands) {
-       res.instr.insert(res.instr.end(),
-                        command.instr.begin(),
-                        command.instr.end());
+       res.insert(res.end(),
+                        std::make_move_iterator(command.begin()),
+                        std::make_move_iterator(command.end()));
     }
     return res;
 }
 
 Command move_forward() {
-    return Command({std::make_shared<MoveForward>()});
+    return {std::make_unique<MoveForward>()};
 }
 
 Command move_backward() {
-    return Command({std::make_shared<MoveBack>()});
+    return {std::make_unique<MoveBack>()};
 }
 
 Command rotate_left() {
-    return Command({std::make_shared<RotateLeft>()});
+    return {std::make_unique<RotateLeft>()};
 }
 
 Command rotate_right() {
-    return Command({std::make_shared<RotateRight>()});
+    return {std::make_unique<RotateRight>()};
 }
-
 
 #endif //ROVER_COMMAND_H
