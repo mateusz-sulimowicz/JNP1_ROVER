@@ -64,7 +64,7 @@ private:
 
     bool is_location_safe(Location l) const {
         for (const auto &s : sensors) {
-            if (!s->is_safe(l.x, l.y)) {
+            if (!s->is_safe(l.get_x(), l.get_y())) {
                 return false;
             }
         }
@@ -97,18 +97,8 @@ std::ostream &operator<<(std::ostream &os, const Rover &r) {
 
 class RoverBuilder {
 public:
-    RoverBuilder program_command(char name, Command &command) {
-        program.insert({name, std::move(command)});
-        return *this;
-    }
-
     RoverBuilder program_command(char name, Command &&command) {
         program.insert({name, command});
-        return *this;
-    }
-
-    RoverBuilder add_sensor(std::shared_ptr<Sensor> &sensor) {
-        sensors.push_back(std::move(sensor));
         return *this;
     }
 

@@ -7,6 +7,38 @@ enum class Direction {
     NORTH, EAST, SOUTH, WEST
 };
 
+// Returns direction on the right
+Direction operator++(const Direction &d) {
+    switch (d) {
+        case Direction::NORTH:
+            return Direction::EAST;
+        case Direction::EAST:
+            return Direction::SOUTH;
+        case Direction::SOUTH:
+            return Direction::WEST;
+        case Direction::WEST:
+            return Direction::NORTH;
+        default:
+            throw std::exception{};
+    }
+}
+
+// Returns direction on the left
+Direction operator--(const Direction &d) {
+    switch (d) {
+        case Direction::NORTH:
+            return Direction::WEST;
+        case Direction::WEST:
+            return Direction::SOUTH;
+        case Direction::SOUTH:
+            return Direction::EAST;
+        case Direction::EAST:
+            return Direction::NORTH;
+        default:
+            throw std::exception{};
+    }
+}
+
 std::ostream &operator<<(std::ostream &os, const Direction &d) {
     switch (d) {
         case Direction::NORTH:
@@ -26,92 +58,87 @@ std::ostream &operator<<(std::ostream &os, const Direction &d) {
     }
 }
 
-struct Location {
+class Location {
+public:
     Location(coordinate_t x, coordinate_t y) : x(x), y(y) {}
 
+    [[nodiscard]] coordinate_t get_x() const {
+        return x;
+    }
+
+    [[nodiscard]] coordinate_t get_y() const {
+        return y;
+    }
+
+private:
     const coordinate_t x;
     const coordinate_t y;
+
+    friend Location operator+(const Location &a, const Location &b) {
+        return {a.x + b.x, a.y + b.y};
+    }
+
+    friend Location operator-(const Location &a, const Location &b) {
+        return {a.x - b.x, a.y - b.y};
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Location &l) {
+        os << "("
+           << l.x
+           << ", "
+           << l.y
+           << ")";
+        return os;
+    }
 };
 
-struct Position {
+class Position {
 public:
     Position(Location l, Direction d)
             : l(l), d(d) {}
 
     [[nodiscard]] Position forward() const {
-        switch (d) {
-            case Direction::NORTH:
-                return {{l.x, l.y + 1}, d};
-            case Direction::EAST:
-                return {{l.x + 1, l.y}, d};
-            case Direction::SOUTH:
-                return {{l.x, l.y - 1}, d};
-            case Direction::WEST:
-                return {{l.x - 1, l.y}, d};
-            default:
-                throw std::exception{};
-        }
+        return {l + delta(), d};
     }
 
     [[nodiscard]] Position right() const {
-        switch (d) {
-            case Direction::NORTH:
-                return {{l.x, l.y}, Direction::EAST};
-            case Direction::EAST:
-                return {{l.x, l.y}, Direction::SOUTH};
-            case Direction::SOUTH:
-                return {{l.x, l.y}, Direction::WEST};
-            case Direction::WEST:
-                return {{l.x, l.y}, Direction::NORTH};
-            default:
-                throw std::exception{};
-        }
+        return {l, ++d};
     }
 
     [[nodiscard]] Position left() const {
-        switch (d) {
-            case Direction::NORTH:
-                return {{l.x, l.y}, Direction::WEST};
-            case Direction::WEST:
-                return {{l.x, l.y}, Direction::SOUTH};
-            case Direction::SOUTH:
-                return {{l.x, l.y}, Direction::EAST};
-            case Direction::EAST:
-                return {{l.x, l.y}, Direction::NORTH};
-            default:
-                throw std::exception{};
-        }
+        return {l, --d};
     }
 
     [[nodiscard]] Position back() const {
+        return {l - delta(), d};
+    }
+
+private:
+    const Location l;
+    const Direction d;
+
+    const Location delta() const {
         switch (d) {
             case Direction::NORTH:
-                return {{l.x, l.y - 1}, d};
+                return {0, 1};
             case Direction::EAST:
-                return {{l.x - 1, l.y}, d};
+                return {1, 0};
             case Direction::SOUTH:
-                return {{l.x, l.y + 1}, d};
+                return {0, -1};
             case Direction::WEST:
-                return {{l.x + 1, l.y}, d};
+                return {-1, 0};
             default:
                 throw std::exception{};
         }
     }
 
-    const Location l;
-    const Direction d;
-
-    friend std::ostream &operator<<(std::ostream &os, const Position &p);
+    friend std::ostream &operator<<(std::ostream &os, const Position &p) {
+        os << p.l
+           << " "
+           << p.d;
+        return os;
+    }
 };
 
-std::ostream &operator<<(std::ostream &os, const Position &p) {
-    os << "("
-       << p.l.x
-       << ", "
-       << p.l.y
-       << ") "
-       << p.d;
-    return os;
-}
 
 #endif //ROVER_POSITION_H
