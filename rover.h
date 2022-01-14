@@ -12,7 +12,6 @@ public:
 };
 
 class Rover {
-
 public:
     using Program = std::unordered_map<char, Command>;
     using SensorModule = std::vector<std::shared_ptr<Sensor>>;
@@ -37,14 +36,14 @@ public:
     }
 
     void land(Location l, Direction d) {
-        p = std::make_shared<Position>(l, d);
+        p = std::make_unique<Position>(l, d);
     }
 
 private:
     const Program program;
     const SensorModule sensors;
     bool is_stopped = false;
-    std::shared_ptr<Position> p = nullptr;
+    std::unique_ptr<Position> p = nullptr;
 
     bool execute(char command) {
         assert(is_landed());
@@ -54,17 +53,17 @@ private:
 
         for (const auto &instr : program.at(command)) {
             Position next_pos = instr->execute(*p);
-            if (!is_location_safe(next_pos.l)) {
+            if (!is_safe(next_pos.get_x(), next_pos.get_y())) {
                 return false;
             }
-            p = std::make_shared<Position>(next_pos.l, next_pos.d);
+            p = std::make_unique<Position>(next_pos);
         }
         return true;
     }
 
-    bool is_location_safe(Location l) const {
+    bool is_safe(coordinate_t x, coordinate_t y) const {
         for (const auto &s : sensors) {
-            if (!s->is_safe(l.get_x(), l.get_y())) {
+            if (!s->is_safe(x, y)) {
                 return false;
             }
         }

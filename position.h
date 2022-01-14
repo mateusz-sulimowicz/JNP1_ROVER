@@ -62,14 +62,6 @@ class Location {
 public:
     Location(coordinate_t x, coordinate_t y) : x(x), y(y) {}
 
-    [[nodiscard]] coordinate_t get_x() const {
-        return x;
-    }
-
-    [[nodiscard]] coordinate_t get_y() const {
-        return y;
-    }
-
 private:
     const coordinate_t x;
     const coordinate_t y;
@@ -90,12 +82,17 @@ private:
            << ")";
         return os;
     }
+
+    friend class Position;
 };
 
 class Position {
 public:
     Position(Location l, Direction d)
             : l(l), d(d) {}
+
+    Position(const Position &that)
+	    : l(that.l), d(that.d) {}
 
     [[nodiscard]] Position forward() const {
         return {l + delta(), d};
@@ -111,6 +108,14 @@ public:
 
     [[nodiscard]] Position back() const {
         return {l - delta(), d};
+    }
+
+    [[nodiscard]] coordinate_t get_x() const {
+    	return l.x;
+    }
+
+    [[nodiscard]] coordinate_t get_y() const {
+    	return l.y;
     }
 
 private:
