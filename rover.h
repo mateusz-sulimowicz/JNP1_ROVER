@@ -22,7 +22,6 @@ public:
             sensors(sensors) {}
 
     void execute(const std::string &commands) {
-        std::cout << commands << "\n";
         if (!is_landed()) {
             throw RoverNotLanded{};
         }
@@ -49,7 +48,6 @@ private:
 
     bool execute(char command) {
         assert(is_landed());
-        std::cout << command << "\n";
         if (!command_exists(command)) {
             return false;
         }

@@ -109,9 +109,8 @@ std::ostream &operator<<(std::ostream &os, const Position &p) {
        << p.l.x
        << ", "
        << p.l.y
-       << " "
-       << p.d
-       << ")";
+       << ") "
+       << p.d;
     return os;
 }
 
