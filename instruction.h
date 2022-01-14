@@ -1,14 +1,14 @@
 #ifndef ROVER_INSTRUCTION_H
 #define ROVER_INSTRUCTION_H
 
-#include "Position.h"
+#include "position.h"
 
 class Instruction {
 public:
     virtual Position
     execute(const Position &p) = 0;
 
-    virtual ~Instruction() = 0;
+    virtual ~Instruction() = default;
 };
 
 class MoveForward : public Instruction {

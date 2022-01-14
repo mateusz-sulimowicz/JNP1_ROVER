@@ -3,4 +3,4 @@ project(rover)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(rover main.cpp Sensor.h Rover.h Command.h Instruction.h Position.h)
+add_executable(rover main.cpp sensor.h rover.h command.h instruction.h position.h)

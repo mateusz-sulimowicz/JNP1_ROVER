@@ -8,7 +8,6 @@ enum class Direction {
 };
 
 std::ostream &operator<<(std::ostream &os, const Direction &d) {
-    std::string d_str;
     switch (d) {
         case Direction::NORTH:
             os << "NORTH";
@@ -28,11 +27,11 @@ std::ostream &operator<<(std::ostream &os, const Direction &d) {
 struct Location {
     Location(coordinate_t x, coordinate_t y) : x(x), y(y) {}
 
-    coordinate_t x;
-    coordinate_t y;
+    const coordinate_t x;
+    const coordinate_t y;
 };
 
-class Position {
+struct Position {
 public:
     Position(Location l, Direction d)
             : l(l), d(d) {}
@@ -89,7 +88,6 @@ public:
         }
     }
 
-private:
     const Location l;
     const Direction d;
 
