@@ -7,7 +7,7 @@
 #include <vector>
 #include "instruction.h"
 
-using Command = std::vector<std::unique_ptr<Instruction>>;
+using Command = std::vector<std::shared_ptr<Instruction>>;
 
 Command compose(std::initializer_list<Command> commands) {
     Command res;

@@ -99,7 +99,11 @@ private:
 class RoverBuilder {
 public:
     RoverBuilder &program_command(char name, Command command) {
-        program.insert({name, std::move(command)});
+        if (program.find(name) != program.end()) {
+	    program.erase(name);
+	}
+	    
+	program.insert({name, std::move(command)});
         return *this;
     }
 
