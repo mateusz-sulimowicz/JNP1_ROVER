@@ -119,7 +119,7 @@ private:
     const Location l;
     const Direction d;
 
-    [[nodiscard]] const Location delta() const {
+    [[nodiscard]] Location delta() const {
         switch (d) {
             case Direction::NORTH:
                 return {0, 1};

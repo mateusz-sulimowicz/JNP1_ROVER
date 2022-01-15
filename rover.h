@@ -27,7 +27,7 @@ public:
         }
 
         bool success = true;
-        for (char c : commands) {
+        for (char c: commands) {
             success = execute(c);
             if (!success) {
                 break;
@@ -52,7 +52,7 @@ private:
             return false;
         }
 
-        for (const auto &instr : program.at(command)) {
+        for (const auto &instr: program.at(command)) {
             Position next_pos = instr->execute(*p);
             if (!is_safe(next_pos.get_x(), next_pos.get_y())) {
                 return false;
@@ -63,7 +63,7 @@ private:
     }
 
     bool is_safe(coordinate_t x, coordinate_t y) const {
-        for (const auto &s : sensors) {
+        for (const auto &s: sensors) {
             if (!s->is_safe(x, y)) {
                 return false;
             }
@@ -79,20 +79,18 @@ private:
         return program.find(name) != program.end();
     }
 
-    friend std::ostream &operator<<(std::ostream &os, const Rover &r);
-};
-
-std::ostream &operator<<(std::ostream &os, const Rover &r) {
-    if (!r.is_landed()) {
-        os << "unknown";
-    } else {
-        os << *(r.p);
-        if (r.is_stopped) {
-            os << " stopped";
+    friend std::ostream &operator<<(std::ostream &os, const Rover &r) {
+        if (!r.is_landed()) {
+            os << "unknown";
+        } else {
+            os << *(r.p);
+            if (r.is_stopped) {
+                os << " stopped";
+            }
         }
+        return os;
     }
-    return os;
-}
+};
 
 class RoverBuilder {
 public:
