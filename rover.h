@@ -19,6 +19,7 @@ public:
 
     void land(Location l, Direction d) {
         p = std::make_unique<Position>(l, d);
+	is_stopped = false;
     }
 
     void execute(const std::string &commands) {
