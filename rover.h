@@ -17,12 +17,12 @@ public:
     using Program = std::unordered_map<char, Command>;
     using SensorModule = std::vector<std::unique_ptr<Sensor>>;
 
-    Rover(Program program, SensorModule sensors) :
-            program(std::move(program)),
-            sensors(std::move(sensors)) {}
+    void land(Location l, Direction d) {
+        p = std::make_unique<Position>(l, d);
+    }
 
     void execute(const std::string &commands) {
-        if (!is_landed()) {
+        if (!has_landed()) {
             throw RoverNotLanded{};
         }
 
@@ -36,18 +36,19 @@ public:
         is_stopped = !success;
     }
 
-    void land(Location l, Direction d) {
-        p = std::make_unique<Position>(l, d);
-    }
-
 private:
     const Program program;
     const SensorModule sensors;
     bool is_stopped = false;
     std::unique_ptr<Position> p = nullptr;
 
+    // Rover is instantiable only through RoverBuilder.
+    Rover(Program program, SensorModule sensors) :
+            program(std::move(program)),
+            sensors(std::move(sensors)) {}
+
     bool execute(char command) {
-        assert(is_landed());
+        assert(has_landed());
         if (!command_exists(command)) {
             return false;
         }
@@ -71,7 +72,7 @@ private:
         return true;
     }
 
-    [[nodiscard]] bool is_landed() const {
+    [[nodiscard]] bool has_landed() const {
         return p != nullptr;
     }
 
@@ -80,7 +81,7 @@ private:
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Rover &r) {
-        if (!r.is_landed()) {
+        if (!r.has_landed()) {
             os << "unknown";
         } else {
             os << *(r.p);
@@ -90,6 +91,8 @@ private:
         }
         return os;
     }
+
+    friend class RoverBuilder;
 };
 
 class RoverBuilder {
