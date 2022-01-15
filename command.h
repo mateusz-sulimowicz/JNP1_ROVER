@@ -7,32 +7,40 @@
 #include <vector>
 #include "instruction.h"
 
-using Command = std::vector<std::shared_ptr<Instruction>>;
+using Command = std::vector<std::unique_ptr<Instruction>>;
 
 Command compose(std::initializer_list<Command> commands) {
-    Command res{};
+    Command res;
     for (auto &command: commands) {
-       res.insert(res.end(),
-                        std::make_move_iterator(command.begin()),
-                        std::make_move_iterator(command.end()));
+        for (const auto &i : command) {
+            res.push_back(i->clone());
+        }
     }
     return res;
 }
 
 Command move_forward() {
-    return {std::make_unique<MoveForward>()};
+    Command c;
+    c.push_back(std::move(std::make_unique<MoveForward>()));
+    return c;
 }
 
 Command move_backward() {
-    return {std::make_unique<MoveBack>()};
+    Command c;
+    c.push_back(std::move(std::make_unique<MoveBack>()));
+    return c;
 }
 
 Command rotate_left() {
-    return {std::make_unique<RotateLeft>()};
+    Command c;
+    c.push_back(std::move(std::make_unique<RotateLeft>()));
+    return c;
 }
 
 Command rotate_right() {
-    return {std::make_unique<RotateRight>()};
+    Command c;
+    c.push_back(std::move(std::make_unique<RotateRight>()));
+    return c;
 }
 
 #endif //ROVER_COMMAND_H
